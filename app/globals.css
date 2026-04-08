@@ -1,19 +1,45 @@
 @import "tailwindcss";
 
 :root {
-  --bg: #050505;
-  --surface: #0a0a0a;
-  --surface-raised: #111111;
+  /* Spacing scale */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-24: 96px;
+  --space-32: 128px;
+  --space-40: 160px;
+
+  /* Colors */
+  --bg: #0a0a0a;
+  --surface: #111111;
   --border: #1a1a1a;
-  --border-bright: #2a2a2a;
+  --border-hover: #2a2a2a;
   --text-primary: #fafafa;
-  --text-secondary: #888888;
+  --text-secondary: #999999;
   --text-dim: #555555;
   --accent: #00ff88;
-  --accent-dim: rgba(0, 255, 136, 0.08);
-  --accent-glow: rgba(0, 255, 136, 0.15);
   --danger: #ff4453;
   --warning: #ffaa00;
+
+  /* Fluid typography */
+  --text-xs: clamp(0.7rem, 0.65rem + 0.25vw, 0.75rem);
+  --text-sm: clamp(0.8rem, 0.75rem + 0.25vw, 0.875rem);
+  --text-base: clamp(0.95rem, 0.9rem + 0.25vw, 1.05rem);
+  --text-lg: clamp(1.1rem, 1rem + 0.5vw, 1.25rem);
+  --text-xl: clamp(1.25rem, 1.1rem + 0.75vw, 1.5rem);
+  --text-2xl: clamp(1.5rem, 1.2rem + 1.5vw, 2rem);
+  --text-3xl: clamp(1.8rem, 1.4rem + 2vw, 2.5rem);
+  --text-hero: clamp(2.75rem, 1.75rem + 5vw, 5rem);
+
+  /* Radii */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
 }
 
 @theme inline {
@@ -22,10 +48,7 @@
   --color-accent: var(--accent);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-* {
-  box-sizing: border-box;
+  --font-display: var(--font-instrument-serif);
 }
 
 html {
@@ -36,90 +59,30 @@ body {
   background: var(--bg);
   color: var(--text-primary);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
-  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
-/* Dot grid background */
-.dot-grid {
-  background-image: radial-gradient(circle, #1a1a1a 1px, transparent 1px);
-  background-size: 24px 24px;
+/* Section label — reusable */
+.section-label {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-dim);
 }
 
-/* Glow effects */
-.glow-green {
-  box-shadow:
-    0 0 20px rgba(0, 255, 136, 0.1),
-    0 0 60px rgba(0, 255, 136, 0.05),
-    inset 0 0 20px rgba(0, 255, 136, 0.03);
-}
-
-.glow-green-strong {
-  box-shadow:
-    0 0 30px rgba(0, 255, 136, 0.15),
-    0 0 80px rgba(0, 255, 136, 0.08),
-    inset 0 0 30px rgba(0, 255, 136, 0.05);
-}
-
-/* Terminal cursor blink */
-@keyframes blink {
-  0%, 50% { opacity: 1; }
-  51%, 100% { opacity: 0; }
-}
-
-.cursor-blink {
-  animation: blink 1s step-end infinite;
-}
-
-/* Fade in on scroll */
-@keyframes fadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.fade-up {
-  animation: fadeUp 0.8s ease-out both;
-}
-
-.fade-up-delay-1 { animation-delay: 0.1s; }
-.fade-up-delay-2 { animation-delay: 0.2s; }
-.fade-up-delay-3 { animation-delay: 0.3s; }
-.fade-up-delay-4 { animation-delay: 0.4s; }
-
-/* Typewriter for terminal */
-@keyframes typewriter {
-  from { width: 0; }
-  to { width: 100%; }
-}
-
-/* Subtle line scan effect */
-@keyframes scanline {
-  0% { transform: translateY(-100%); }
-  100% { transform: translateY(100vh); }
-}
-
-.scanline::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.06), transparent);
-  animation: scanline 8s linear infinite;
-  pointer-events: none;
+/* Tabular nums for metrics */
+.metric-value {
+  font-variant-numeric: tabular-nums;
 }
 
 /* Terminal window */
 .terminal-window {
-  background: #0a0a0a;
-  border: 1px solid #1a1a1a;
-  border-radius: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
   overflow: hidden;
 }
 
@@ -127,76 +90,12 @@ body {
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 12px 16px;
-  background: #0f0f0f;
-  border-bottom: 1px solid #1a1a1a;
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--border);
 }
 
 .terminal-dot {
   width: 10px;
   height: 10px;
   border-radius: 50%;
-}
-
-/* Gradient border trick */
-.gradient-border {
-  position: relative;
-}
-
-.gradient-border::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  padding: 1px;
-  background: linear-gradient(135deg, rgba(0, 255, 136, 0.3), transparent 50%);
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  pointer-events: none;
-}
-
-/* Step connector line */
-.step-connector {
-  position: relative;
-}
-
-.step-connector::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  right: -24px;
-  width: 48px;
-  height: 1px;
-  background: linear-gradient(90deg, var(--accent), transparent);
-}
-
-@media (max-width: 768px) {
-  .step-connector::after {
-    top: auto;
-    bottom: -24px;
-    right: 50%;
-    width: 1px;
-    height: 48px;
-    background: linear-gradient(180deg, var(--accent), transparent);
-  }
-}
-
-/* Number highlight */
-.metric-value {
-  font-variant-numeric: tabular-nums;
-  letter-spacing: -0.02em;
-}
-
-/* Noise overlay for texture */
-.noise-overlay {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 9999;
-  opacity: 0.015;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-  background-repeat: repeat;
-  background-size: 256px;
 }
