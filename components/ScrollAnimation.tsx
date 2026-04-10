@@ -2,6 +2,29 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 
+// --- Helpers ---
+
+function seededRandom(seed: number) {
+  const x = Math.sin(seed * 9301 + 49297) * 49297;
+  return x - Math.floor(x);
+}
+
+function clamp01(t: number) {
+  return Math.max(0, Math.min(1, t));
+}
+
+function lerp(a: number, b: number, t: number) {
+  return a + (b - a) * clamp01(t);
+}
+
+function easeOut(t: number) {
+  return 1 - Math.pow(1 - clamp01(t), 3);
+}
+
+function rangeT(progress: number, start: number, end: number) {
+  return clamp01((progress - start) / (end - start));
+}
+
 // --- PR icon SVG ---
 
 function PRIcon({ type }: { type: "fix" | "feat" }) {
@@ -79,18 +102,8 @@ const prCards: PRCard[] = [
   { id: 40, label: "feat: RBAC", type: "feat", pattern: "healthy" },
 ];
 
-// --- Helpers ---
+// --- Positions ---
 
-function seededRandom(seed: number) {
-  const x = Math.sin(seed * 9301 + 49297) * 49297;
-  return x - Math.floor(x);
-}
-
-function lerp(a: number, b: number, t: number) {
-  return a + (b - a) * Math.max(0, Math.min(1, t));
-}
-
-// Edge scatter: cards around viewport edges, center clear for Hero
 function edgeScatter(id: number): { x: number; y: number } {
   const strip = id % 4;
   const r1 = seededRandom(id * 7);
@@ -104,7 +117,6 @@ function edgeScatter(id: number): { x: number; y: number } {
   }
 }
 
-// Inner scatter: looser cloud across viewport
 function innerScatter(id: number): { x: number; y: number } {
   return {
     x: seededRandom(id * 7) * 0.7 + 0.15,
@@ -112,7 +124,20 @@ function innerScatter(id: number): { x: number; y: number } {
   };
 }
 
-// --- Cluster layout ---
+function clusterPos(card: PRCard): { x: number; y: number } {
+  const cluster = CLUSTERS[card.pattern];
+  const memberIndex = prCards
+    .filter((c) => c.pattern === card.pattern)
+    .findIndex((c) => c.id === card.id);
+  const col = memberIndex % 3;
+  const row = Math.floor(memberIndex / 3);
+  return {
+    x: cluster.cx + (col - 1) * 0.06,
+    y: cluster.cy + 0.03 + row * 0.045,
+  };
+}
+
+// --- Layout constants ---
 
 const CLUSTERS: Record<string, { cx: number; cy: number; label: string }> = {
   format: { cx: 0.18, cy: 0.35, label: "format-handling" },
@@ -128,21 +153,12 @@ const FIXES: { pattern: string; label: string; x: number; y: number }[] = [
   { pattern: "null", label: "→ property-based tests", x: 0.82, y: 0.55 },
 ];
 
-const PHASE_LABELS = [
-  "",
-  "4,218 pull requests",
-  "Bug patterns identified",
-  "Remediation prescribed",
-  "Verified & monitored",
+const PHASE_LABELS: { text: string; start: number; end: number }[] = [
+  { text: "4,218 pull requests", start: 0.15, end: 0.35 },
+  { text: "Bug patterns identified", start: 0.35, end: 0.60 },
+  { text: "Remediation prescribed", start: 0.60, end: 0.80 },
+  { text: "Verified & monitored", start: 0.80, end: 1.0 },
 ];
-
-function getPhase(progress: number): number {
-  if (progress < 0.15) return 0; // hero + ambient cards
-  if (progress < 0.35) return 1; // scatter
-  if (progress < 0.6) return 2;  // clustered
-  if (progress < 0.8) return 3;  // prescription arrows
-  return 4;                       // fixed checkmarks
-}
 
 // --- Component ---
 
@@ -155,8 +171,7 @@ export default function ScrollAnimation() {
     const rect = outerRef.current.getBoundingClientRect();
     const scrollableHeight = rect.height - window.innerHeight;
     if (scrollableHeight <= 0) return;
-    const rawProgress = -rect.top / scrollableHeight;
-    setProgress(Math.max(0, Math.min(1, rawProgress)));
+    setProgress(clamp01(-rect.top / scrollableHeight));
   }, []);
 
   useEffect(() => {
@@ -175,13 +190,16 @@ export default function ScrollAnimation() {
     return () => window.removeEventListener("scroll", onScroll);
   }, [handleScroll]);
 
-  const phase = getPhase(progress);
+  // --- All derived values (continuous) ---
 
-  // Hero fades starting at progress 0.02, gone by 0.12
-  const heroOpacity = 1 - Math.min(1, Math.max(0, (progress - 0.02) / 0.1));
-
-  // Cards drift inward during hero phase
-  const heroToScatterT = Math.min(1, progress / 0.15);
+  const heroOpacity = 1 - clamp01((progress - 0.02) / 0.1);
+  const heroToScatterT = clamp01(progress / 0.15);
+  const clusterT = easeOut(rangeT(progress, 0.35, 0.60));
+  const clusterLabelOpacity = rangeT(progress, 0.40, 0.50);
+  const arrowDrawT = rangeT(progress, 0.60, 0.75);
+  const fixCardOpacity = rangeT(progress, 0.62, 0.75);
+  const checkOpacity = rangeT(progress, 0.80, 0.90);
+  const summaryOpacity = rangeT(progress, 0.85, 0.95);
 
   return (
     <div ref={outerRef} className="relative" style={{ height: "500vh" }}>
@@ -189,7 +207,7 @@ export default function ScrollAnimation() {
         className="sticky top-0 h-screen overflow-hidden"
         style={{ background: "var(--bg)" }}
       >
-        {/* === Hero content overlay === */}
+        {/* === Hero content === */}
         <div
           className="absolute inset-0 flex flex-col items-center justify-center px-6 pt-16"
           style={{
@@ -236,27 +254,38 @@ export default function ScrollAnimation() {
           </div>
         </div>
 
-        {/* === Phase label (phases 1-4) === */}
-        {phase >= 1 && (
-          <div className="phase-label">{PHASE_LABELS[phase]}</div>
-        )}
+        {/* === Phase labels (crossfade) === */}
+        {PHASE_LABELS.map((label) => {
+          const fadeIn = rangeT(progress, label.start, label.start + 0.04);
+          const fadeOut = 1 - rangeT(progress, label.end - 0.04, label.end);
+          return (
+            <div
+              key={label.text}
+              className="phase-label"
+              style={{ opacity: Math.min(fadeIn, fadeOut) }}
+            >
+              {label.text}
+            </div>
+          );
+        })}
 
-        {/* === Summary line — phase 4 only === */}
-        <div className={`summary-line ${phase >= 4 ? "summary-line--visible" : ""}`}>
+        {/* === Summary line === */}
+        <div className="summary-line" style={{ opacity: summaryOpacity }}>
           Fix ratio: <span style={{ color: "var(--danger)" }}>44%</span>
           {" → "}
           <span style={{ color: "var(--accent)" }}>28%</span>
         </div>
 
-        {/* === Cluster labels — visible from phase 2 === */}
+        {/* === Cluster labels === */}
         {Object.entries(CLUSTERS).map(([key, cluster]) => (
           <div
             key={key}
-            className={`cluster-label ${phase >= 2 ? "cluster-label--visible" : ""}`}
+            className="cluster-label"
             style={{
               left: `${cluster.cx * 100}%`,
               top: `${cluster.cy * 100 - 14}%`,
               transform: "translateX(-50%)",
+              opacity: clusterLabelOpacity,
             }}
           >
             {cluster.label}
@@ -265,40 +294,24 @@ export default function ScrollAnimation() {
 
         {/* === PR cards === */}
         {prCards.map((card) => {
-          const cluster = CLUSTERS[card.pattern];
-
-          // Edge scatter (initial, avoids center)
           const edge = edgeScatter(card.id);
-          // Inner scatter (cards drift toward during hero fade)
           const inner = innerScatter(card.id);
-          // Cluster positions
-          const memberIndex = prCards
-            .filter((c) => c.pattern === card.pattern)
-            .findIndex((c) => c.id === card.id);
-          const cols = 3;
-          const col = memberIndex % cols;
-          const row = Math.floor(memberIndex / cols);
-          const clx = cluster.cx + (col - 1) * 0.06;
-          const cly = cluster.cy + 0.03 + row * 0.045;
+          const cl = clusterPos(card);
 
-          // Position: interpolate edge→inner during hero, then cluster
-          let x: number, y: number;
-          if (phase <= 1) {
-            x = lerp(edge.x, inner.x, heroToScatterT);
-            y = lerp(edge.y, inner.y, heroToScatterT);
-          } else {
-            x = clx;
-            y = cly;
-          }
+          // Continuous position: edge → inner → cluster
+          const scatterX = lerp(edge.x, inner.x, heroToScatterT);
+          const scatterY = lerp(edge.y, inner.y, heroToScatterT);
+          const x = lerp(scatterX, cl.x, clusterT);
+          const y = lerp(scatterY, cl.y, clusterT);
 
-          const isAmbient = phase === 0;
-          const isScatter = phase === 1;
-          const isDimmed = phase >= 2 && card.pattern === "healthy";
-          const isResolved = phase >= 4 && card.type === "fix";
+          // CSS class for state
+          const isAmbient = progress < 0.05;
+          const isDimmed = progress > 0.4 && card.pattern === "healthy";
+          const isResolved = progress > 0.85 && card.type === "fix";
 
           let stateClass = "";
           if (isAmbient) stateClass = "pr-card--ambient";
-          else if (isScatter) stateClass = "pr-card--scatter";
+          else stateClass = "pr-card--scatter";
           if (isDimmed) stateClass += " pr-card--dimmed";
           if (isResolved) stateClass += " pr-card--resolved";
 
@@ -319,7 +332,7 @@ export default function ScrollAnimation() {
           );
         })}
 
-        {/* === SVG arrows — phase 3+ === */}
+        {/* === SVG arrows === */}
         <svg
           className="absolute inset-0 w-full h-full pointer-events-none"
           style={{ zIndex: 2 }}
@@ -329,25 +342,27 @@ export default function ScrollAnimation() {
             return (
               <line
                 key={fix.pattern}
-                className={`arrow-line ${phase >= 3 ? "arrow-line--drawn" : ""}`}
+                className="arrow-line"
                 x1={`${cluster.cx * 100}%`}
                 y1={`${(cluster.cy + 0.1) * 100}%`}
                 x2={`${fix.x * 100}%`}
                 y2={`${fix.y * 100}%`}
+                style={{ strokeDashoffset: 200 * (1 - arrowDrawT) }}
               />
             );
           })}
         </svg>
 
-        {/* === Fix cards — phase 3+ === */}
+        {/* === Fix cards === */}
         {FIXES.map((fix) => (
           <div
             key={fix.pattern}
-            className={`fix-card ${phase >= 3 ? "fix-card--visible" : ""}`}
+            className="fix-card"
             style={{
               left: `${fix.x * 100}%`,
               top: `${fix.y * 100}%`,
               transform: "translate(-50%, -50%)",
+              opacity: fixCardOpacity,
               zIndex: 3,
             }}
           >
@@ -355,17 +370,18 @@ export default function ScrollAnimation() {
           </div>
         ))}
 
-        {/* === Checkmarks — phase 4 === */}
+        {/* === Checkmarks === */}
         {Object.entries(CLUSTERS)
           .filter(([key]) => key !== "healthy" && key !== "misc")
           .map(([key, cluster]) => (
             <div
               key={key}
-              className={`check-mark ${phase >= 4 ? "check-mark--visible" : ""}`}
+              className="check-mark"
               style={{
                 left: `${cluster.cx * 100}%`,
                 top: `${cluster.cy * 100}%`,
                 transform: "translate(-50%, -50%)",
+                opacity: checkOpacity,
                 zIndex: 4,
               }}
             >
