@@ -99,3 +99,152 @@ body {
   height: 10px;
   border-radius: 50%;
 }
+
+/* Drift animation for ambient PR cards */
+@keyframes drift {
+  0%, 100% { translate: 0 0; }
+  25% { translate: 8px -12px; }
+  50% { translate: -6px -8px; }
+  75% { translate: 10px 6px; }
+}
+
+/* Scroll animation — PR cards */
+.pr-card {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 11px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  will-change: transform, opacity;
+  transition:
+    transform 1s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.6s ease;
+}
+
+.pr-card--ambient {
+  opacity: 0.4;
+  animation: drift 25s ease-in-out infinite;
+}
+
+.pr-card--scatter {
+  opacity: 0.7;
+  animation: none;
+}
+
+.pr-card--fix {
+  border-left: 2px solid var(--danger);
+}
+
+.pr-card--feat {
+  border-left: 2px solid var(--border-hover);
+}
+
+.pr-card--dimmed {
+  opacity: 0.2;
+}
+
+.pr-card--resolved {
+  opacity: 0.35;
+}
+
+/* Fix prescription cards */
+.fix-card {
+  position: absolute;
+  padding: 10px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--accent);
+  border-left: 3px solid var(--accent);
+  background: var(--surface);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 12px;
+  color: var(--accent);
+  white-space: nowrap;
+  opacity: 0;
+  will-change: transform, opacity;
+  transition: opacity 0.6s ease;
+}
+
+.fix-card--visible {
+  opacity: 1;
+}
+
+/* Cluster labels */
+.cluster-label {
+  position: absolute;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: var(--text-xs);
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.cluster-label--visible {
+  opacity: 1;
+}
+
+/* Phase label */
+.phase-label {
+  position: absolute;
+  bottom: 48px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: var(--text-sm);
+  color: var(--text-dim);
+  transition: opacity 0.4s ease;
+}
+
+/* Checkmark */
+.check-mark {
+  position: absolute;
+  color: var(--accent);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  font-size: 28px;
+  line-height: 1;
+}
+
+.check-mark--visible {
+  opacity: 1;
+}
+
+/* SVG arrow lines */
+.arrow-line {
+  stroke: var(--accent);
+  stroke-width: 1.5;
+  fill: none;
+  stroke-dasharray: 200;
+  stroke-dashoffset: 200;
+  transition: stroke-dashoffset 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.arrow-line--drawn {
+  stroke-dashoffset: 0;
+}
+
+/* Summary line */
+.summary-line {
+  position: absolute;
+  bottom: 96px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: var(--text-lg);
+  color: var(--text-primary);
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  white-space: nowrap;
+}
+
+.summary-line--visible {
+  opacity: 1;
+}
