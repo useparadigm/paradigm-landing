@@ -1,5 +1,5 @@
 import Nav from "@/components/Nav";
-import Hero from "@/components/Hero";
+import ScrollAnimation from "@/components/ScrollAnimation";
 import Problem from "@/components/Problem";
 import HowItWorks from "@/components/HowItWorks";
 import ScanReveals from "@/components/ScanReveals";
@@ -11,7 +11,7 @@ export default function Home() {
     <>
       <Nav />
       <main>
-        <Hero />
+        <ScrollAnimation />
         <Problem />
         <HowItWorks />
         <ScanReveals />
