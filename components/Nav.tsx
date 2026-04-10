@@ -23,10 +23,12 @@ export default function Nav() {
             How it works
           </a>
           <a
-            href="#hero-cta"
+            href="https://calendar.google.com/calendar/appointments/schedules/AcZssZ3qOWE4c9IDdsaX-l2r-khhvdQw9F7LmGmngeSJGwy1_2DN37NXNCv5YNc2CbGK99raCQ5BeX4M"
+            target="_blank"
+            rel="noopener noreferrer"
             className="text-[var(--text-secondary)] text-sm hover:text-[var(--text-primary)] transition-colors"
           >
-            Scan repo
+            Book a call
           </a>
         </div>
       </div>

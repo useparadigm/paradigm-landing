@@ -23,34 +23,28 @@ export default function Hero() {
 
         {/* Subline */}
         <p
-          className="text-[var(--text-secondary)] max-w-[540px] mx-auto mb-24"
+          className="text-[var(--text-secondary)] max-w-[540px] mx-auto mb-12"
           style={{
             fontSize: "var(--text-lg)",
             lineHeight: 1.6,
           }}
         >
-          Paradigm analyzes your PR history to find recurring bug patterns, then
-          helps you fix them. Free scan for any public GitHub repo.
+          We analyze your PR history to find recurring bug patterns, then
+          help you fix them. Diagnosis, remediation plan, implementation, monitoring.
         </p>
 
-        {/* CTA input */}
-        <div id="hero-cta" className="max-w-xl mx-auto">
-          <div className="flex items-center gap-3 px-4 py-3 rounded-[var(--radius-md)] border border-[var(--border)] bg-[var(--surface)]">
-            <span className="font-mono text-sm text-[var(--text-dim)] select-none shrink-0">
-              $
-            </span>
-            <input
-              type="text"
-              placeholder="github.com/org/repo"
-              className="flex-1 bg-transparent font-mono text-sm text-[var(--text-primary)] placeholder:text-[var(--text-dim)] outline-none"
-            />
-            <button className="shrink-0 px-5 py-2 bg-[var(--accent)] text-[var(--bg)] font-mono text-sm font-medium rounded-[var(--radius-sm)] hover:brightness-110 transition-all cursor-pointer">
-              Scan
-            </button>
-          </div>
-
+        {/* CTA */}
+        <div id="hero-cta">
+          <a
+            href="https://calendar.google.com/calendar/appointments/schedules/AcZssZ3qOWE4c9IDdsaX-l2r-khhvdQw9F7LmGmngeSJGwy1_2DN37NXNCv5YNc2CbGK99raCQ5BeX4M"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block px-8 py-3 bg-[var(--accent)] text-[var(--bg)] text-sm font-medium rounded-[var(--radius-sm)] hover:brightness-110 transition-all"
+          >
+            Book a call
+          </a>
           <p className="mt-4 text-sm text-[var(--text-dim)]">
-            No signup required. Results in under 2 minutes.
+            30 min intro — we&apos;ll show you what we find in your repo.
           </p>
         </div>
       </div>
