@@ -6,11 +6,11 @@ const problems = [
         <polyline points="16,7 22,7 22,13" />
       </svg>
     ),
-    title: "Bug fixes keep growing",
+    title: "Tools catch symptoms, not patterns",
     description:
-      "Fix-to-feature ratio climbs quarter over quarter but nobody tracks it. You feel it in sprint velocity — you just can't prove it.",
-    metric: "44%",
-    metricLabel: "avg fix ratio",
+      "Your linter flags a missing null check. But it doesn't tell you that null-handling bugs account for 30% of your fixes this quarter — or that contract tests would eliminate them.",
+    metric: "12+",
+    metricLabel: "tools in your CI",
   },
   {
     icon: (
@@ -23,11 +23,11 @@ const problems = [
         <path d="M14 17h2" />
       </svg>
     ),
-    title: "Same patterns, different files",
+    title: "Same bugs keep shipping",
     description:
-      "Format handling, state management, edge cases — the same bug types keep recurring across the codebase. Different engineer, same mistake.",
-    metric: "13",
-    metricLabel: "recurring bugs/mo",
+      "Format handling, state sync, edge cases — the same bug types recur across different files and engineers. The tools you have don't connect the dots.",
+    metric: "44%",
+    metricLabel: "avg fix-to-feature ratio",
   },
   {
     icon: (
@@ -36,11 +36,11 @@ const problems = [
         <polyline points="12,6 12,12 16,14" />
       </svg>
     ),
-    title: "No time to diagnose",
+    title: "Nobody has time to figure out which fix matters",
     description:
-      "Engineers know something's wrong but can't stop feature work to analyze what. The backlog won't fix itself and neither will the process.",
+      "Property-based testing, contract tests, payload validation — the solutions exist. But knowing which one to adopt, where, and why? That takes an analysis nobody has bandwidth for.",
     metric: "0",
-    metricLabel: "hours on root cause",
+    metricLabel: "hours spent on root cause",
   },
 ];
 
@@ -48,14 +48,20 @@ export default function Problem() {
   return (
     <section className="px-6" style={{ paddingTop: "var(--space-40)", paddingBottom: "var(--space-40)" }}>
       <div className="max-w-6xl mx-auto">
-        <div className="mb-16">
+        <div className="mb-16 max-w-2xl">
           <p className="section-label mb-4">The problem</p>
           <h2
-            className="font-semibold tracking-[-0.02em]"
+            className="font-semibold tracking-[-0.02em] mb-6"
             style={{ fontSize: "var(--text-3xl)" }}
           >
-            Teams ship bugs they could prevent
+            You have the tools. You don&apos;t have the diagnosis.
           </h2>
+          <p
+            className="text-[var(--text-secondary)] leading-relaxed"
+            style={{ fontSize: "var(--text-base)" }}
+          >
+            Linters, type checkers, CI pipelines, code review bots — your team already runs dozens of dev tools. But none of them tell you which recurring issues are actually worth fixing, or how much they cost you every sprint.
+          </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
