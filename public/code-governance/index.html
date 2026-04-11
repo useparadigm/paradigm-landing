@@ -678,6 +678,7 @@ body::after {
 
 .compare-table th:nth-child(2) { color: var(--amber); }
 .compare-table th:nth-child(3) { color: var(--text-dim); }
+.compare-table th:nth-child(4) { color: var(--text-dim); }
 
 .compare-table td {
   color: var(--text-dim);
@@ -1039,8 +1040,8 @@ footer {
   <div class="container">
     <div class="reveal">
       <div class="section-label">honest comparison</div>
-      <h2>vs import-linter</h2>
-      <p><a href="https://github.com/seddonym/import-linter" target="_blank" style="color:var(--amber);text-decoration:none;">import-linter</a> is the established tool for this. Here's an honest comparison.</p>
+      <h2>vs tach &amp; import-linter</h2>
+      <p><a href="https://github.com/tach-org/tach" target="_blank" style="color:var(--amber);text-decoration:none;">tach</a> (2.7k stars, abandoned June 2025) and <a href="https://github.com/seddonym/import-linter" target="_blank" style="color:var(--amber);text-decoration:none;">import-linter</a> are the established tools. Here's an honest comparison.</p>
     </div>
 
     <div class="compare-table-wrap reveal">
@@ -1049,6 +1050,7 @@ footer {
           <tr>
             <th></th>
             <th>code-governance</th>
+            <th>tach</th>
             <th>import-linter</th>
           </tr>
         </thead>
@@ -1056,68 +1058,98 @@ footer {
           <tr>
             <td>Setup</td>
             <td class="val">--generate creates config from source</td>
+            <td>50-100 lines TOML with regex</td>
             <td>Manual contract definition</td>
+          </tr>
+          <tr>
+            <td>Monorepo support</td>
+            <td class="yes">✓ scans source directly</td>
+            <td class="no">Broken — silent failures</td>
+            <td class="no">Broken — path config issues</td>
           </tr>
           <tr>
             <td>Diff mode</td>
             <td class="yes">✓ only check changed files</td>
+            <td class="no">✗</td>
             <td class="no">✗</td>
           </tr>
           <tr>
             <td>Baseline</td>
             <td class="yes">✓ accept existing, fail on new</td>
             <td class="no">✗</td>
+            <td class="no">✗</td>
           </tr>
           <tr>
             <td>CI comments</td>
             <td class="yes">✓ PR comments + fix suggestions</td>
-            <td class="no">✗</td>
+            <td class="no">Exit code only</td>
+            <td class="no">Exit code only</td>
           </tr>
           <tr>
             <td>Auto-fix</td>
             <td class="yes">✓ /governance fix</td>
+            <td class="no">✗</td>
             <td class="no">✗</td>
           </tr>
           <tr>
             <td>LLM advice</td>
             <td class="yes">✓ architectural recommendations</td>
             <td class="no">✗</td>
+            <td class="no">✗</td>
+          </tr>
+          <tr>
+            <td>Error guidance</td>
+            <td class="yes">LLM explains why + suggests fix</td>
+            <td class="no">"cycle detected" — no context</td>
+            <td>Import chain shown, no fix</td>
           </tr>
           <tr>
             <td>Module metrics</td>
             <td class="yes">✓ cohesion, surface, symbol count</td>
             <td class="no">✗</td>
+            <td class="no">✗</td>
           </tr>
           <tr>
             <td>HTML report</td>
             <td class="yes">✓ dependency matrix viewer</td>
+            <td class="no">✗</td>
             <td>separate browser UI</td>
+          </tr>
+          <tr>
+            <td>Public interface enforcement</td>
+            <td class="no">✗</td>
+            <td class="yes">✓ visibility controls</td>
+            <td class="no">✗</td>
           </tr>
           <tr>
             <td>Transitive imports</td>
             <td class="no">direct only</td>
+            <td class="no">direct only</td>
             <td class="yes">✓ transitive chains</td>
-          </tr>
-          <tr>
-            <td>Forbidden contracts</td>
-            <td class="no">✗</td>
-            <td class="yes">✓</td>
           </tr>
           <tr>
             <td>Speed (Django, 902 files)</td>
             <td>~1.2s</td>
+            <td class="val">sub-second (Rust)</td>
             <td class="val">~0.1s</td>
+          </tr>
+          <tr>
+            <td>Maintenance</td>
+            <td class="yes">Active</td>
+            <td class="no">Abandoned — community fork</td>
+            <td>Active but slow</td>
           </tr>
           <tr>
             <td>Package needs installing</td>
             <td class="yes">No — scans source directly</td>
+            <td class="yes">No — scans source</td>
             <td class="no">Yes — must be importable</td>
           </tr>
         </tbody>
       </table>
     </div>
 
-    <p class="compare-note reveal">Choose import-linter if you need transitive import detection. Choose code-governance if you want CI integration, auto-fix, LLM advice, or zero-config&nbsp;setup.</p>
+    <p class="compare-note reveal">Choose import-linter if you need transitive import detection. Choose tach if you need public interface enforcement (but note it's unmaintained). Choose code-governance if you want CI integration, auto-fix, LLM advice, monorepo support, or zero-config&nbsp;setup.</p>
   </div>
 </section>
 
