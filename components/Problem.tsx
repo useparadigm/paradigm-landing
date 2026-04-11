@@ -2,45 +2,49 @@ const problems = [
   {
     icon: (
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--text-dim)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        <polyline points="22,7 13.5,15.5 8.5,10.5 2,17" />
-        <polyline points="16,7 22,7 22,13" />
-      </svg>
-    ),
-    title: "Tools catch symptoms, not patterns",
-    description:
-      "Your linter flags a missing null check. But it doesn't tell you that null-handling bugs account for 30% of your fixes this quarter — or that contract tests would eliminate them.",
-    metric: "12+",
-    metricLabel: "tools in your CI",
-  },
-  {
-    icon: (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--text-dim)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
-        <polyline points="14,2 14,8 20,8" />
-        <path d="M8 13h2" />
-        <path d="M8 17h2" />
-        <path d="M14 13h2" />
-        <path d="M14 17h2" />
-      </svg>
-    ),
-    title: "Same bugs keep shipping",
-    description:
-      "Format handling, state sync, edge cases — the same bug types recur across different files and engineers. The tools you have don't connect the dots.",
-    metric: "44%",
-    metricLabel: "avg fix-to-feature ratio",
-  },
-  {
-    icon: (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--text-dim)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="12" cy="12" r="10" />
-        <polyline points="12,6 12,12 16,14" />
+        <circle cx="12" cy="12" r="3" />
+        <line x1="12" y1="2" x2="12" y2="5" />
+        <line x1="12" y1="19" x2="12" y2="22" />
+        <line x1="2" y1="12" x2="5" y2="12" />
+        <line x1="19" y1="12" x2="22" y2="12" />
       </svg>
     ),
-    title: "Nobody has time to figure out which fix matters",
+    title: "You see bugs. We see patterns.",
     description:
-      "Property-based testing, contract tests, payload validation — the solutions exist. But knowing which one to adopt, where, and why? That takes an analysis nobody has bandwidth for.",
+      "Same root causes repeat across files and engineers. Format parsing, null handling, state sync — each looks like a one-off. Nobody connects the 13 incidents into one systemic pattern.",
+    metric: "13",
+    metricLabel: "recurring bugs/mo",
+  },
+  {
+    icon: (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--text-dim)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+        <polyline points="7.5,4.21 12,6.81 16.5,4.21" />
+        <polyline points="7.5,19.79 7.5,14.6 3,12" />
+        <polyline points="21,12 16.5,14.6 16.5,19.79" />
+        <line x1="3.27" y1="6.96" x2="12" y2="12.01" />
+        <line x1="20.73" y1="6.96" x2="12" y2="12.01" />
+      </svg>
+    ),
+    title: "You know something\u2019s wrong. You don\u2019t know what fixes it.",
+    description:
+      "Contract tests? Property-based testing? Schema validation? The right tool exists but the testing landscape is massive and your team uses what it already knows.",
+    metric: "47",
+    metricLabel: "tools you\u2019ll never evaluate",
+  },
+  {
+    icon: (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--text-dim)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <line x1="12" y1="1" x2="12" y2="23" />
+        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+      </svg>
+    ),
+    title: "You can\u2019t justify the investment.",
+    description:
+      "\u201CWe should improve testing\u201D loses to feature work every sprint. Without data on what recurring bugs actually cost, there\u2019s no case to make.",
     metric: "0",
-    metricLabel: "hours spent on root cause",
+    metricLabel: "hours proving testing ROI",
   },
 ];
 
@@ -51,17 +55,11 @@ export default function Problem() {
         <div className="mb-16 max-w-2xl">
           <p className="section-label mb-4">The problem</p>
           <h2
-            className="font-semibold tracking-[-0.02em] mb-6"
+            className="font-semibold tracking-[-0.02em]"
             style={{ fontSize: "var(--text-3xl)" }}
           >
-            You have the tools. You don&apos;t have the diagnosis.
+            Every team has these problems. No team has time to solve them.
           </h2>
-          <p
-            className="text-[var(--text-secondary)] leading-relaxed"
-            style={{ fontSize: "var(--text-base)" }}
-          >
-            Linters, type checkers, CI pipelines, code review bots — your team already runs dozens of dev tools. But none of them tell you which recurring issues are actually worth fixing, or how much they cost you every sprint.
-          </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

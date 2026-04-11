@@ -3,25 +3,25 @@ const steps = [
     number: "01",
     label: "Diagnose",
     description:
-      "We analyze your PR history. Where bugs cluster, what types recur, fix ratio trends. All from your GitHub data.",
+      "We analyze your PR history. Which bugs recur, where they cluster, what patterns emerge. You get the picture nobody had time to build.",
   },
   {
     number: "02",
     label: "Prescribe",
     description:
-      "An expert reviews the diagnosis and creates a remediation plan specific to your stack, your CI, your team structure.",
+      "We match the right tool to each pattern. Not \u201Cimprove testing\u201D \u2014 specific: \u201Cadd contract tests for payload boundaries in these 3 modules.\u201D",
   },
   {
     number: "03",
     label: "Implement",
     description:
-      "We open PRs with test infrastructure, CI config, and example tests. We pair with your engineers to set it up.",
+      "We open PRs with test infrastructure, CI config, example tests. We pair with your engineers. The gap between knowing and doing is where quality efforts die \u2014 we close it.",
   },
   {
     number: "04",
     label: "Monitor",
     description:
-      "Track whether interventions worked. Fix ratios, revert rates, pattern recurrence. See the before and after.",
+      "We track whether it worked. Fix ratios, revert rates, pattern recurrence. You get the ROI proof that justifies the next improvement.",
   },
 ];
 
