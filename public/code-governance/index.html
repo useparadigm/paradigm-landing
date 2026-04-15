@@ -1041,7 +1041,7 @@ footer {
     <div class="reveal">
       <div class="section-label">honest comparison</div>
       <h2>vs tach &amp; import-linter</h2>
-      <p><a href="https://github.com/tach-org/tach" target="_blank" style="color:var(--amber);text-decoration:none;">tach</a> (2.7k stars, abandoned June 2025) and <a href="https://github.com/seddonym/import-linter" target="_blank" style="color:var(--amber);text-decoration:none;">import-linter</a> are the established tools. Here's an honest comparison.</p>
+      <p><a href="https://github.com/tach-org/tach" target="_blank" style="color:var(--amber);text-decoration:none;">tach</a> and <a href="https://github.com/seddonym/import-linter" target="_blank" style="color:var(--amber);text-decoration:none;">import-linter</a> are the established tools. Here's an honest comparison.</p>
     </div>
 
     <div class="compare-table-wrap reveal">
@@ -1064,8 +1064,8 @@ footer {
           <tr>
             <td>Monorepo support</td>
             <td class="yes">✓ scans source directly</td>
-            <td class="no">Broken — silent failures</td>
-            <td class="no">Broken — path config issues</td>
+            <td>✓ scans source</td>
+            <td class="no">Must be importable</td>
           </tr>
           <tr>
             <td>Diff mode</td>
@@ -1134,12 +1134,6 @@ footer {
             <td class="val">~0.1s</td>
           </tr>
           <tr>
-            <td>Maintenance</td>
-            <td class="yes">Active</td>
-            <td class="no">Abandoned — community fork</td>
-            <td>Active but slow</td>
-          </tr>
-          <tr>
             <td>Package needs installing</td>
             <td class="yes">No — scans source directly</td>
             <td class="yes">No — scans source</td>
@@ -1149,7 +1143,7 @@ footer {
       </table>
     </div>
 
-    <p class="compare-note reveal">Choose tach if you need public interface enforcement (but note it's unmaintained). Choose code-governance for transitive chain detection, CI integration, auto-fix, LLM advice, monorepo support, and zero-config&nbsp;setup.</p>
+    <p class="compare-note reveal">Choose tach if you need public interface enforcement or visibility controls. Choose code-governance for transitive chain detection, CI integration, auto-fix, LLM advice, and zero-config&nbsp;setup.</p>
   </div>
 </section>
 
