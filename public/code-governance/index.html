@@ -678,6 +678,7 @@ body::after {
 
 .compare-table th:nth-child(2) { color: var(--amber); }
 .compare-table th:nth-child(3) { color: var(--text-dim); }
+.compare-table th:nth-child(4) { color: var(--text-dim); }
 
 .compare-table td {
   color: var(--text-dim);
@@ -913,7 +914,7 @@ footer {
         <div class="step-num">2</div>
         <h3>Configure</h3>
         <p>Review the generated <code style="background:none;border:none;padding:0;color:var(--amber);font-size:inherit;">governance.toml</code>. Adjust boundaries to match your intended architecture.</p>
-        <code>[[modules]]<br>name = "api"<br>depends_on = ["core", "auth"]</code>
+        <code>[[modules]]<br>name = "api"<br>cannot_depend_on = ["billing", "migrations"]</code>
       </div>
       <div class="step reveal">
         <div class="step-num">3</div>
@@ -935,8 +936,8 @@ footer {
     <div class="rules-grid">
       <div class="rule-card reveal">
         <span class="rule-icon">🔗</span>
-        <div class="rule-name">enforce_depends_on</div>
-        <div class="rule-desc">Module imports something not in its allowed dependency list.</div>
+        <div class="rule-name">enforce_cannot_depend_on</div>
+        <div class="rule-desc">Module imports from a forbidden dependency.</div>
       </div>
       <div class="rule-card reveal">
         <span class="rule-icon">🔄</span>
@@ -973,16 +974,16 @@ footer {
 
     <div class="pr-comment reveal">
       <div class="pr-title">❌ Governance — 1 violation, 1 new module</div>
-      <div class="pr-violation">🔴 🔗 core: Undeclared dependency: 'core' imports 'db' (allowed: [])</div>
+      <div class="pr-violation">🔴 🔗 core: Forbidden dependency: 'core' imports 'db' (cannot_depend_on: ['db'])</div>
       <div style="color: var(--text-dimmer); margin-bottom: 12px; padding-left: 24px;">core/service.py:2</div>
       <div class="pr-new-module">📦 New module <strong>exporters</strong> (exporters/) — not in governance.toml</div>
       <div class="pr-fix">Reply <code style="font-family:var(--font-mono);background:var(--bg);padding:2px 6px;border-radius:3px;border:1px solid #30363d;font-size:12px;">/governance fix</code> to apply.</div>
-      <div class="pr-ai">🤖 AI: The core→db import creates tight coupling. Extract shared types into a common module, or add "db" to core's depends_on.</div>
+      <div class="pr-ai">🤖 AI: The core→db import creates tight coupling. Extract shared types into a common module, or remove "db" from core's cannot_depend_on.</div>
     </div>
 
     <div class="ci-sub reveal">
       <div class="ci-sub-text">
-        <p>Reply <strong style="color:var(--text);">/governance fix</strong> on the PR and the bot auto-updates your <code style="font-family:var(--font-mono);font-size:13px;">governance.toml</code> with correct <code style="font-family:var(--font-mono);font-size:13px;">depends_on</code> and commits to your&nbsp;branch.</p>
+        <p>Reply <strong style="color:var(--text);">/governance fix</strong> on the PR and the bot auto-updates your <code style="font-family:var(--font-mono);font-size:13px;">governance.toml</code> with correct <code style="font-family:var(--font-mono);font-size:13px;">cannot_depend_on</code> and commits to your&nbsp;branch.</p>
         <p>Adopting on an existing codebase? Save a baseline and only fail on <em>new</em>&nbsp;violations:</p>
         <div style="font-family:var(--font-mono);font-size:12px;color:var(--green);background:var(--bg);padding:10px 14px;border-radius:6px;border:1px solid var(--border);">governance-ast --save-baseline .governance-baseline.json<br>governance-ast --baseline .governance-baseline.json</div>
       </div>
@@ -1017,7 +1018,7 @@ footer {
         <div class="ai-text">
           The <strong style="color:var(--text);">api → billing</strong> dependency suggests checkout logic is reaching into the billing module directly. Consider:<br><br>
           1. Extract <code style="font-family:var(--font-mono);color:var(--cyan);">charge_customer()</code> into a shared interface in <strong style="color:var(--text);">core</strong><br>
-          2. Or explicitly add "billing" to api's <code style="font-family:var(--font-mono);color:var(--cyan);">depends_on</code> — this is a legitimate dependency if api owns the checkout&nbsp;flow<br><br>
+          2. Or explicitly remove "billing" from api's <code style="font-family:var(--font-mono);color:var(--cyan);">cannot_depend_on</code> — this is a legitimate dependency if api owns the checkout&nbsp;flow<br><br>
           The <strong style="color:var(--text);">payments ↔ notifications</strong> cycle is more concerning. Break it with an event bus or move <code style="font-family:var(--font-mono);color:var(--cyan);">send_receipt</code> into the payments&nbsp;module.
         </div>
       </div>
@@ -1039,8 +1040,8 @@ footer {
   <div class="container">
     <div class="reveal">
       <div class="section-label">honest comparison</div>
-      <h2>vs import-linter</h2>
-      <p><a href="https://github.com/seddonym/import-linter" target="_blank" style="color:var(--amber);text-decoration:none;">import-linter</a> is the established tool for this. Here's an honest comparison.</p>
+      <h2>vs tach &amp; import-linter</h2>
+      <p><a href="https://github.com/tach-org/tach" target="_blank" style="color:var(--amber);text-decoration:none;">tach</a> and <a href="https://github.com/seddonym/import-linter" target="_blank" style="color:var(--amber);text-decoration:none;">import-linter</a> are the established tools. Here's an honest comparison.</p>
     </div>
 
     <div class="compare-table-wrap reveal">
@@ -1049,6 +1050,7 @@ footer {
           <tr>
             <th></th>
             <th>code-governance</th>
+            <th>tach</th>
             <th>import-linter</th>
           </tr>
         </thead>
@@ -1056,68 +1058,92 @@ footer {
           <tr>
             <td>Setup</td>
             <td class="val">--generate creates config from source</td>
+            <td>50-100 lines TOML with regex</td>
             <td>Manual contract definition</td>
+          </tr>
+          <tr>
+            <td>Monorepo support</td>
+            <td class="yes">✓ scans source directly</td>
+            <td>✓ scans source</td>
+            <td class="no">Must be importable</td>
           </tr>
           <tr>
             <td>Diff mode</td>
             <td class="yes">✓ only check changed files</td>
+            <td class="no">✗</td>
             <td class="no">✗</td>
           </tr>
           <tr>
             <td>Baseline</td>
             <td class="yes">✓ accept existing, fail on new</td>
             <td class="no">✗</td>
+            <td class="no">✗</td>
           </tr>
           <tr>
             <td>CI comments</td>
             <td class="yes">✓ PR comments + fix suggestions</td>
-            <td class="no">✗</td>
+            <td class="no">Exit code only</td>
+            <td class="no">Exit code only</td>
           </tr>
           <tr>
             <td>Auto-fix</td>
             <td class="yes">✓ /governance fix</td>
+            <td class="no">✗</td>
             <td class="no">✗</td>
           </tr>
           <tr>
             <td>LLM advice</td>
             <td class="yes">✓ architectural recommendations</td>
             <td class="no">✗</td>
+            <td class="no">✗</td>
+          </tr>
+          <tr>
+            <td>Error guidance</td>
+            <td class="yes">LLM explains why + suggests fix</td>
+            <td class="no">"cycle detected" — no context</td>
+            <td>Import chain shown, no fix</td>
           </tr>
           <tr>
             <td>Module metrics</td>
             <td class="yes">✓ cohesion, surface, symbol count</td>
             <td class="no">✗</td>
+            <td class="no">✗</td>
           </tr>
           <tr>
             <td>HTML report</td>
             <td class="yes">✓ dependency matrix viewer</td>
+            <td class="no">✗</td>
             <td>separate browser UI</td>
           </tr>
           <tr>
+            <td>Public interface enforcement</td>
+            <td class="no">✗</td>
+            <td class="yes">✓ visibility controls</td>
+            <td class="no">✗</td>
+          </tr>
+          <tr>
             <td>Transitive imports</td>
+            <td class="yes">✓ transitive chains</td>
             <td class="no">direct only</td>
             <td class="yes">✓ transitive chains</td>
           </tr>
           <tr>
-            <td>Forbidden contracts</td>
-            <td class="no">✗</td>
-            <td class="yes">✓</td>
-          </tr>
-          <tr>
             <td>Speed (Django, 902 files)</td>
             <td>~1.2s</td>
+            <td class="val">sub-second (Rust)</td>
             <td class="val">~0.1s</td>
           </tr>
           <tr>
             <td>Package needs installing</td>
             <td class="yes">No — scans source directly</td>
+            <td class="yes">No — scans source</td>
             <td class="no">Yes — must be importable</td>
           </tr>
         </tbody>
       </table>
     </div>
 
-    <p class="compare-note reveal">Choose import-linter if you need transitive import detection. Choose code-governance if you want CI integration, auto-fix, LLM advice, or zero-config&nbsp;setup.</p>
+    <p class="compare-note reveal">Choose tach if you need public interface enforcement or visibility controls. Choose code-governance for transitive chain detection, CI integration, auto-fix, LLM advice, and zero-config&nbsp;setup.</p>
   </div>
 </section>
 
@@ -1152,8 +1178,8 @@ const terminalLines = [
   { text: 'Modules: 5 | Files scanned: 47', cls: 'output', delay: 200 },
   { text: '', cls: '', delay: 300 },
   { text: 'Violations (2):', cls: 'error', delay: 300 },
-  { text: '  [E] [enforce_depends_on] Undeclared dependency:', cls: 'rule', delay: 150 },
-  { text: "      'api' imports 'billing' (allowed: ['core', 'auth'])", cls: 'error', delay: 100 },
+  { text: '  [E] [enforce_cannot_depend_on] Forbidden dependency:', cls: 'rule', delay: 150 },
+  { text: "      'api' imports 'billing' (cannot_depend_on: ['billing'])", cls: 'error', delay: 100 },
   { text: '      api/checkout.py:3    from billing.stripe import charge_customer', cls: 'file', delay: 100 },
   { text: '  [E] [no_cycles] Circular dependency:', cls: 'rule', delay: 150 },
   { text: '      payments -> notifications -> payments', cls: 'error', delay: 100 },
